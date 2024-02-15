@@ -3,4 +3,9 @@ I found this tutorial while looking for information about Firebase and React Nat
 #####
 [React Native Firebase Tutorial](https://www.freecodecamp.org/news/react-native-firebase-tutorial/)
 #####
-As it was outdated and used the Firebase namespace SDK I took the time and ported it to Firebase Modular SDK
+
+- updated working code from namespace SDK to Firebase Modular SDK
+- Will to implement further sign on options 
+    - single sign on 
+
+
