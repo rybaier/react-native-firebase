@@ -1,32 +1,64 @@
-import 'react-native-gesture-handler';
-import React, { useEffect, useState } from 'react'
-import { NavigationContainer } from '@react-navigation/native'
-import { createStackNavigator } from '@react-navigation/stack'
-import { LoginScreen, HomeScreen, RegistrationScreen } from './src/screens'
-import { getAuth, onAuthStateChanged } from 'firebase/auth'
-import { getFirestore, doc, getDoc, collection } from 'firebase/firestore'
+import "react-native-gesture-handler";
+import React, { useEffect, useState } from "react";
+import { NavigationContainer } from "@react-navigation/native";
+import { createStackNavigator } from "@react-navigation/stack";
+import { LoginScreen, HomeScreen, RegistrationScreen } from "./src/screens";
+import { getAuth, onAuthStateChanged, signOut } from "firebase/auth";
+import { getFirestore, doc, getDoc, collection } from "firebase/firestore";
+import { TouchableOpacity } from "react-native-gesture-handler";
+import { Text } from "react-native";
+import { decode, encode } from "base-64";
+import ReactNativeAsyncStorage from "@react-native-async-storage/async-storage";
+if (!global.btoa) {
+  global.btoa = encode;
+}
+if (!global.atob) {
+  global.atob = decode;
+}
 
-import {decode, encode} from 'base-64'
-if (!global.btoa) {  global.btoa = encode }
-if (!global.atob) { global.atob = decode }
+const Stack = createStackNavigator();
+const auth = getAuth(); // create Auth globally for access throughout use effect function
+const db = getFirestore(); // create db globally for access throughout use effect function
 
-const Stack = createStackNavigator()
-const auth = getAuth() // create Auth globally for access throughout use effect function
-const db = getFirestore() // create db globally for access throughout use effect function
+// const navigationRef = createNavigationContainerRef()
+// const navigate = (names, params) => {
+//   if(navigationRef.isReady()){
+//     navigationRef.navigate(names, params)
+//   }
+// }
+
+const LoggedIn = (user) => {
+  <Stack.Navigator>
+    <Stack.Screen
+      name="Home"
+      component={HomeScreen}
+      options={{
+        title: "Work List",
+        headerRight: () => (
+          <TouchableOpacity onPress={() => { signOut(auth) }}>
+            <Text style={{ marginRight: 25 }}>Log Out</Text>
+          </TouchableOpacity>
+        ),
+      }}
+      extraData={user}
+    />
+    <Stack.Screen name="Login" component={LoginScreen} />
+    <Stack.Screen name="Registration" component={RegistrationScreen} />
+  </Stack.Navigator>;
+};
 
 export default function App() {
-
-  const [loading, setLoading] = useState(true)
-  const [user, setUser] = useState(null)
+  const [loading, setLoading] = useState(true);
+  const [user, setUser] = useState(null);
 
   useEffect(() => {
-    console.log('CURRENTUSER', user)
-    const usersRef = collection(db, 'users');
+    console.log("CURRENTUSER", user);
+    const usersRef = collection(db, "users");
 
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (user) {
         try {
-          const userDoc = doc(db, 'users', user.uid);
+          const userDoc = doc(db, "users", user.uid);
           const docSnapshot = await getDoc(userDoc);
           if (docSnapshot.exists()) {
             const userData = docSnapshot.data();
@@ -35,7 +67,7 @@ export default function App() {
             setUser(null); // User document doesn't exist
           }
         } catch (error) {
-          console.error('Error fetching user data:', error);
+          console.error("Error fetching user data:", error);
         } finally {
           setLoading(false);
         }
@@ -52,10 +84,24 @@ export default function App() {
   return (
     <NavigationContainer>
       <Stack.Navigator>
-        { user ? (
-          <Stack.Screen name="Home">
-            {props => <HomeScreen {...props} extraData={user} />}
-            </Stack.Screen>
+        {user ? (
+          <Stack.Screen
+            name="Home"
+            options={{
+              title: "Work List",
+              headerRight: () => (
+                <TouchableOpacity
+                  onPress={() => {
+                    signOut(auth);
+                  }}
+                >
+                  <Text style={{ marginRight: 25 }}>Log Out</Text>
+                </TouchableOpacity>
+              ),
+            }}
+          >
+            {(props) => <HomeScreen {...props} extraData={user} />}
+          </Stack.Screen>
         ) : (
           <>
             <Stack.Screen name="Login" component={LoginScreen} />
@@ -66,7 +112,6 @@ export default function App() {
     </NavigationContainer>
   );
 }
-
 
 // Namespace SDK
 // useEffect(() => {
