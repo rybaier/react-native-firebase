@@ -5,7 +5,6 @@ import styles from './styles';
 // Import Firebase authentication and Firestore modules
 import { getAuth, signInWithEmailAndPassword } from 'firebase/auth';
 import { getFirestore, doc, getDoc } from 'firebase/firestore';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 
 // Login screen component
 export default function LoginScreen({ navigation }) {
