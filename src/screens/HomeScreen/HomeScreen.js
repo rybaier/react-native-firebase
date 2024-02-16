@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from 'react'
 import { FlatList, Keyboard, Text, TextInput, TouchableOpacity, View } from 'react-native'
 import styles from './styles';
-import { getFirestore, collection, addDoc, query, where, orderBy, onSnapshot, serverTimestamp } from 'firebase/firestore';
+import { collection, addDoc, query, where, orderBy, onSnapshot, serverTimestamp } from 'firebase/firestore';
 import { auth, db } from '../../firebase/config'
-import  ReactNativeAsyncStorage  from '@react-native-async-storage/async-storage';
 
 // Initialize Firestore
 // const db = getFirestore();
@@ -17,8 +16,9 @@ export default function HomeScreen( {extraData}) {
     // Reference to the 'entities' collection in Firestore
     const entityRef = collection(db, 'entities');
     const userID = auth.currentUser.uid; // Assuming auth contains user information
-
+    
     useEffect(() => {
+        
         // Set up a query to fetch entities for the current user, ordered by 'createdAt' in descending order
         const q = query(entityRef, where("authorID", "==", userID), orderBy('createdAt', 'desc'));
 
