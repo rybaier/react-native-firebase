@@ -22,37 +22,7 @@ const Stack = createStackNavigator();
 
 
 export default function App() {
-  const [loading, setLoading] = useState(true);
-  const [user, setUser] = useState(null);
 
-  useEffect(() => {
-    const usersRef = collection(db, "users");
-
-    const unsubscribe = onAuthStateChanged(auth, async (user) => {
-      if (user) {
-        try {
-          const userDoc = doc(db, "users", user.uid);
-          const docSnapshot = await getDoc(userDoc);
-          if (docSnapshot.exists()) {
-            const userData = docSnapshot.data();
-            setUser(userData);
-          } else {
-            setUser(null); // User document doesn't exist
-          }
-        } catch (error) {
-          console.error("Error fetching user data:", error);
-        } finally {
-          setLoading(false);
-        }
-      } else {
-        setUser(null); // No authenticated user
-        setLoading(false);
-      }
-    });
-
-    // Cleanup subscription on unmount
-    return () => unsubscribe();
-  }, []);
 
   return (
     <NavigationContainer>

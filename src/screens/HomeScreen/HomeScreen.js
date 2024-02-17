@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { FlatList, Keyboard, Text, TextInput, TouchableOpacity, View } from 'react-native'
+import { Button, FlatList, Keyboard, Text, TextInput, TouchableOpacity, View } from 'react-native'
 import styles from './styles';
 import { collection, addDoc, query, where, orderBy, onSnapshot, serverTimestamp } from 'firebase/firestore';
 import { auth, db } from '../../firebase/config'
@@ -7,7 +7,7 @@ import { auth, db } from '../../firebase/config'
 // Initialize Firestore
 // const db = getFirestore();
 
-export default function HomeScreen( {extraData}) {
+export default function HomeScreen( {extraData, navigation}) {
     // console.log('AUTH', auth.currentUser.uid) // accessing userID directly from auth negating passing by props
     // console.log('PROPS', extraData.id) // Makes sure userID is coming through props
     const [entityText, setEntityText] = useState(''); // State to hold the text for the new entity
@@ -21,6 +21,8 @@ export default function HomeScreen( {extraData}) {
         
         // Set up a query to fetch entities for the current user, ordered by 'createdAt' in descending order
         const q = query(entityRef, where("authorID", "==", userID), orderBy('createdAt', 'desc'));
+        // Uncomment line below and comment out line above for testing of non matching userID 
+        // const q = query(entityRef, where("authorID", "==", 'g4f6RssNGVWg1zRYbe5k0hsKRYm2'), orderBy('createdAt', 'desc'));
 
         // Listen for real-time updates to the query
         const unsubscribe = onSnapshot(q, (querySnapshot) => {
