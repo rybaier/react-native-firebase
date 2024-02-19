@@ -12,6 +12,7 @@ I found this tutorial while looking for information about Firebase and React Nat
     - logout
 
 #### Firestore rules for 
+```
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
@@ -20,7 +21,6 @@ service cloud.firestore {
       allow read, write: if request.auth != null 
       allow delete: if request.auth != null && request.auth.uid == userId;
 		  allow update: if request.auth != null && request.auth.uid == userId;
-
     }
     // Entity documents
     match /entities/{entityId} {
@@ -31,5 +31,5 @@ service cloud.firestore {
     }
   }
 }
-
+```
 #####
