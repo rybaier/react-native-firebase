@@ -50,7 +50,10 @@ export default function LoadScreen ({ navigation }) {
                     <ActivityIndicator size={100} color={'#0fff0f'} />
                 </View>
             ) : (
-                <Button title='HomeScreen'onPress={()=>navigation.navigate('Home')}> Home </Button>
+                <View>
+                    <Text style={styles.text}>Login Failed Please Sign in Again</Text>
+                    <Button title='Login'onPress={()=>navigation.navigate('Login')}/>
+                </View>
         )}
         </View>
     )

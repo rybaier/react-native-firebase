@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from 'react'
 import { Button, FlatList, Keyboard, Text, TextInput, TouchableOpacity, View } from 'react-native'
 import styles from './styles';
-import { collection, addDoc, query, where, orderBy, onSnapshot, serverTimestamp } from 'firebase/firestore';
+import Collapsible from 'react-native-collapsible'
+import { collection, addDoc, query, where, orderBy, 
+    onSnapshot, serverTimestamp, deleteDoc, doc, updateDoc } from 'firebase/firestore';
 import { auth, db } from '../../firebase/config'
 
 // Initialize Firestore
@@ -12,7 +14,9 @@ export default function HomeScreen( {extraData, navigation}) {
     // console.log('PROPS', extraData.id) // Makes sure userID is coming through props
     const [entityText, setEntityText] = useState(''); // State to hold the text for the new entity
     const [entities, setEntities] = useState([]); // State to hold the entities fetched from Firestore
-
+    const [isCollapsed, setIsCollapsed] = useState(true)
+    const [updateText, setUpdateText] = useState('')
+    const [updateItem, setUpdateItem] = useState(null) 
     // Reference to the 'entities' collection in Firestore
     const entityRef = collection(db, 'entities');
     const userID = auth.currentUser.uid; // Assuming auth contains user information
@@ -41,7 +45,7 @@ export default function HomeScreen( {extraData, navigation}) {
 
         // Cleanup function to unsubscribe from the snapshot listener when the component unmounts
         return () => unsubscribe();
-    }, [userID]);
+    }, [userID, auth]);
 
     // Function to handle adding a new entity
     const onAddButtonPress = () => {
@@ -67,21 +71,81 @@ export default function HomeScreen( {extraData, navigation}) {
         }
     };
 
+    const deleteItem = (item) => {
+        console.log(item)
+        const docRef = doc(db, "entities", item.id)
+        deleteDoc(docRef).then(()=>{
+            console.log("Document has been deleted")
+        }).catch(error => console.log(error))
+    }
+
+
+    const updateItemOnPress = (item) => {
+        console.log(item)
+        if (updateItem && updateText.trim() !== "") { // Check if updateItem is not null and updateText is not empty
+            const data = {
+                text: updateText
+            };
+            const docRef = doc(db, "entities", updateItem.id);
+            updateDoc(docRef, data)
+                .then(() => {
+                    console.log("Document has been updated");
+                    setIsCollapsed(true);
+                    setUpdateItem(null);
+                    setUpdateText(''); // Clear the updateText state
+                })
+                .catch((error) => {
+                    console.error("Error updating document: ", error);
+                });
+        }
+    };
+
+
     // Function to render each entity item in the FlatList
+   
     const renderEntity = ({ item, index }) => {
         return (
-            <View style={styles.entityContainer}>
-                <Text style={styles.entityText}>
-                    {/* Display the entity text */}
-                    {index + 1}. {item.text}
-                </Text>
+            <View>
+                <View style={styles.entityContainer}>
+                    <TouchableOpacity style={styles.deleteButton} onPress={() => deleteItem(item)}>
+                        <Text style={styles.buttonText}>Delete</Text>
+                    </TouchableOpacity>
+                    
+                    <Text style={styles.entityText}>
+                        {index + 1}. {item.text}
+                    </Text>
+                    <TouchableOpacity style={styles.deleteButton} onPress={() => { 
+                        setIsCollapsed(false), setUpdateItem(item),
+                        console.log('UPDATE',updateItem)
+                        }}>
+                        <Text style={styles.buttonText}>Update</Text>
+                    </TouchableOpacity>
+                </View> 
+                <View style={styles.entityContainer2}> 
+                    <Collapsible collapsed={isCollapsed || updateItem !== item}>
+                        <TextInput
+                            style={styles.input}
+                            placeholder={item.text}
+                            placeholderTextColor="#aaaaaa"
+                            onChangeText={(text) => setUpdateText(text)}
+                            value={updateText}
+                            underlineColorAndroid="transparent"
+                            autoCapitalize="none"
+                        /> 
+                    </Collapsible>
+                    {updateItem === item && (
+                        <TouchableOpacity style={styles.button} onPress={updateItemOnPress}>
+                            <Text style={styles.buttonText}>Update</Text>
+                        </TouchableOpacity>
+                    )}
+                    </View>
             </View>
         );
     };
 
-
     return (
         <View style={styles.container}>
+        
             <View style={styles.formContainer}>
                 <TextInput
                     style={styles.input}
@@ -109,3 +173,4 @@ export default function HomeScreen( {extraData, navigation}) {
         </View>
     )
 }
+
