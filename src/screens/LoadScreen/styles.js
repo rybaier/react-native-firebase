@@ -3,12 +3,11 @@ import { StyleSheet } from 'react-native';
 export default StyleSheet.create({
     container: {
         flex: 1,
-        alignItems: 'center'
+        justifyContent: 'center',
+        alignItems: 'center',
     },
     text: {
-        fontSize: 20
+        fontSize: 30
     },
-    icon:{
-        fontSize: 50
-    }
+    
 })

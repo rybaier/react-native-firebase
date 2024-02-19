@@ -27,8 +27,15 @@ export default function App() {
   return (
     <NavigationContainer>
       <Stack.Navigator>
-        <Stack.Screen name= "Loading" component={LoadScreen} />
-        <Stack.Screen name="Login" component={LoginScreen} />
+        <Stack.Screen 
+        name= "Loading" 
+        component={LoadScreen} 
+        options={{
+          headerShown: false,
+          }}/>
+        <Stack.Screen name="Login" component={LoginScreen}    options={{
+          headerShown: false,
+          }} />
         <Stack.Screen name="Registration" component={RegistrationScreen} />
         <Stack.Screen
           name="Home"
@@ -47,24 +54,4 @@ export default function App() {
   );
 }
 
-// Namespace SDK
-// useEffect(() => {
-//   const usersRef = firebase.firestore().collection('users');
-//   firebase.auth().onAuthStateChanged(user => {
-//     if (user) {
-//       usersRef
-//         .doc(user.uid)
-//         .get()
-//         .then((document) => {
-//           const userData = document.data()
-//           setLoading(false)
-//           setUser(userData)
-//         })
-//         .catch((error) => {
-//           setLoading(false)
-//         });
-//     } else {
-//       setLoading(false)
-//     }
-//   });
-// }, []);
+
