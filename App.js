@@ -10,7 +10,7 @@ import { Text } from "react-native";
 import { decode, encode } from "base-64";
 import { auth, db } from './src/firebase/config'
 import LoadScreen from "./src/screens/LoadScreen/LoadScreen";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import AsyncStorage from "@react-native-async-storage/async-storage"; // Added AsyncStorage.clear() to signout 
 
 if (!global.btoa) {
   global.btoa = encode;
@@ -44,7 +44,7 @@ export default function App() {
           options={({ navigation }) => ({ // Destructure props pulling navigation object out for direct access in App.js
             title: "Work List",
             headerRight: () => (
-              <TouchableOpacity onPress={() => { signOut(auth), navigation.navigate('Login'), AsyncStorage.clear() }}>
+              <TouchableOpacity onPress={() => { signOut(auth), navigation.navigate('Login'), AsyncStorage.clear() }}> 
                 <Text style={{ marginRight: 25 }}>Log Out</Text>
               </TouchableOpacity>
             ),

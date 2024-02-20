@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Button, FlatList, Keyboard, Text, TextInput, TouchableOpacity, View } from 'react-native'
+import { Button, FlatList, Keyboard, Text, TextInput, TouchableOpacity, View, Scrollview } from 'react-native'
 import styles from './styles';
 import Collapsible from 'react-native-collapsible'
 import { collection, addDoc, query, where, orderBy, 
@@ -14,9 +14,9 @@ export default function HomeScreen( {extraData, navigation}) {
     // console.log('PROPS', extraData.id) // Makes sure userID is coming through props
     const [entityText, setEntityText] = useState(''); // State to hold the text for the new entity
     const [entities, setEntities] = useState([]); // State to hold the entities fetched from Firestore
-    const [isCollapsed, setIsCollapsed] = useState(true)
-    const [updateText, setUpdateText] = useState('')
-    const [updateItem, setUpdateItem] = useState(null) 
+    const [isCollapsed, setIsCollapsed] = useState(true) // State to hold Collapsible status
+    const [updateText, setUpdateText] = useState('') // State to hold Updated text for entity
+    const [updateItem, setUpdateItem] = useState(null)  // State to hold current item for updating
     // Reference to the 'entities' collection in Firestore
     const entityRef = collection(db, 'entities');
     const userID = auth.currentUser.uid; // Assuming auth contains user information
@@ -100,6 +100,17 @@ export default function HomeScreen( {extraData, navigation}) {
         }
     };
 
+    const onDeleteAccountPress = (userID) => {
+        console.log(userID)
+        const userRef = doc(db, "users", userID)
+        deleteDoc(userRef).then(()=>{
+            console.log('USER has been deleted')
+            navigation.navigate('Login')
+        }).catch((error) => {
+            console.log(error)
+        })
+
+    }
 
     // Function to render each entity item in the FlatList
    
@@ -170,6 +181,9 @@ export default function HomeScreen( {extraData, navigation}) {
                     />
                 </View>
             )}
+                  <TouchableOpacity style={styles.button} onPress={()=> onDeleteAccountPress(userID)}>
+                    <Text style={styles.buttonText}>Delete Account</Text>
+                </TouchableOpacity>
         </View>
     )
 }
