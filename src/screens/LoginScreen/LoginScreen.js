@@ -1,10 +1,15 @@
+// Imports 
 import React, { useState } from 'react';
 import { Image, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import styles from './styles';
 // Import Firebase authentication and Firestore modules
-import { getAuth, signInWithEmailAndPassword } from 'firebase/auth';
-import { getFirestore, doc, getDoc } from 'firebase/firestore';
+import { db, auth } from '../../firebase/config';
+import { signInWithEmailAndPassword } from 'firebase/auth';
+import { doc, getDoc } from 'firebase/firestore';
+import GoogleSignInButton from '../../components/googleSignIn';
+
+
 
 // Login screen component
 export default function LoginScreen({ navigation }) {
@@ -20,8 +25,6 @@ export default function LoginScreen({ navigation }) {
     // Function to handle login button press
     const onLoginPress = () => {
         // Get authentication and Firestore instances
-        const auth = getAuth();
-        const db = getFirestore();
 
         // Sign in with email and password
         signInWithEmailAndPassword(auth, email, password)
@@ -94,6 +97,7 @@ export default function LoginScreen({ navigation }) {
                 {/* Footer link to navigate to the registration screen */}
                 <View style={styles.footerView}>
                     <Text style={styles.footerText}>Don't have an account? <Text onPress={onFooterLinkPress} style={styles.footerLink}>Sign up</Text></Text>
+                    <GoogleSignInButton navigation={navigation}/>
                 </View>
             </KeyboardAwareScrollView>
         </View>

@@ -4,7 +4,8 @@ import styles from './styles';
 import Collapsible from 'react-native-collapsible'
 import { collection, addDoc, query, where, orderBy, 
     onSnapshot, serverTimestamp, deleteDoc, doc, updateDoc } from 'firebase/firestore';
-import { auth, db } from '../../firebase/config'
+import {auth, db } from '../../firebase/config'
+import {auth as rnAuth} from '@react-native-firebase/auth'
 
 // Initialize Firestore
 // const db = getFirestore();
@@ -19,7 +20,8 @@ export default function HomeScreen( {extraData, navigation}) {
     const [updateItem, setUpdateItem] = useState(null)  // State to hold current item for updating
     // Reference to the 'entities' collection in Firestore
     const entityRef = collection(db, 'entities');
-    const userID = auth.currentUser.uid; // Assuming auth contains user information
+    const userID = auth.currentUser ? auth.currentUser.uid : null // Checks auth contains user information 
+
     
     useEffect(() => {
         
