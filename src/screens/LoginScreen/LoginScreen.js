@@ -7,7 +7,9 @@ import styles from './styles';
 import { db, auth } from '../../firebase/config';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { doc, getDoc } from 'firebase/firestore';
+// Import Single Sign On (SSO) components
 import GoogleSignInButton from '../../components/googleSignIn';
+import AppleSignInButton from '../../components/appleSignIn';
 
 
 
@@ -98,6 +100,7 @@ export default function LoginScreen({ navigation }) {
                 <View style={styles.footerView}>
                     <Text style={styles.footerText}>Don't have an account? <Text onPress={onFooterLinkPress} style={styles.footerLink}>Sign up</Text></Text>
                     <GoogleSignInButton navigation={navigation}/>
+                    <AppleSignInButton navigation={navigation}/>
                 </View>
             </KeyboardAwareScrollView>
         </View>
