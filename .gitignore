@@ -5,6 +5,9 @@ node_modules/
 /.env
 android
 ios
+GoogleService-Info.plist
+RNT.csr
+RNT.key
 # Expo
 .expo/
 dist/

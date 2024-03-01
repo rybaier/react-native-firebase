@@ -21,7 +21,8 @@
     ],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.anonymous.reactnativefirebase"
+      "bundleIdentifier": "com.anonymous.reactnativefirebase",
+      "googleServicesFile": "./GoogleService-Info.plist"
     },
     "android": {
       "adaptiveIcon": {

@@ -48,3 +48,12 @@ target 'reactnativefirebase' do
   -  WARN  Sending `onAnimatedValueUpdate` with no listeners registered.
 - Top App Bar differences 
   - Show's direct path back to Login on Homescreen without logging out
+
+#### Apple Sign In notes
+- In Apple Developer Account verify 
+  - Key is configured with team and bundle identifier
+  - Development Device is registered with it's UUID
+  - Identifier has Sign in with Apple checked and is configured
+  - Configure a sign in with Apple for Email Communication
+  - A Certificate Signing Request is configured and saved 
+  - Provisioning Profile has the App ID, Certificate and Device selected. with the Sign In With Apple capability Enabled
