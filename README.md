@@ -34,14 +34,27 @@ service cloud.firestore {
 ```
 #####
 
-#### notes on ios build fails 
-- react-native-firebase/firestore package interferes with ios build use firebase/firestore 
+### notes on ios build fails 
+#### If using firebase/firestore for IOS firebase configuration
 - in Podfile use_modular_headers! must be inserted directly below target {App Name} do fore the Google utilities and FirebaseInternalCore to work properly
 ```
 target 'reactnativefirebase' do
   use_modular_headers!
   use_expo_modules!
   config = use_native_modules!
+
+ ```
+
+#### If using react-native-firebase for IOS firebase configuration 
+- in Podfile do not use_modular_headers. Comment all use_frameworks! 
+- add use_frameworks! :linkage => static
+```
+target 'reactnativefirebase' do
+  use_expo_modules!
+  config = use_native_modules!
+
+  use_frameworks! :linkage => :static 
+
   ```
 #### notes on ios success build
 - Warnings to address that didn't show in Android
