@@ -1,3 +1,4 @@
+// FOR CHECKING USER AUTHENTICATION STATE
 import {React, useState, useEffect} from "react";
 import styles from "./styles";
 import { Button, Text, View, ActivityIndicator } from "react-native";
@@ -53,6 +54,8 @@ export default function LoadScreen ({ navigation }) {
                 <View>
                     <Text style={styles.text}>Login Failed Please Sign in Again</Text>
                     <Button title='Login'onPress={()=>navigation.navigate('Login')}/>
+                    <Button title='Home'onPress={()=>navigation.navigate('Home')}/>
+
                 </View>
         )}
         </View>

@@ -1,15 +1,16 @@
 # React Native App and Firebase integration 
-I found this tutorial while looking for information about Firebase and React Native
+I found this tutorial while looking for information about Firebase and React Native. I have been updating it to the Firebase Modular Web SDK syntax 
 #####
 [React Native Firebase Tutorial](https://www.freecodecamp.org/news/react-native-firebase-tutorial/)
 #####
 
 - updated working code from namespace SDK to Firebase Modular SDK
+- Added SSO for google on android and ios
+- added SSO for apple on ios 
+- added logout
 
-- Will implement further options 
-    - single sign on - Discovered this is going to require me to build the app and run native code modules. 
+- Will implement further options as time goes on 
     - update and delete entity 
-    - logout
 
 #### Firestore rules for 
 ```
@@ -34,7 +35,7 @@ service cloud.firestore {
 ```
 #####
 
-### notes on ios build fails 
+### notes on ios builds for Firebase Configuration 
 #### If using firebase/firestore for IOS firebase configuration
 - in Podfile use_modular_headers! must be inserted directly below target {App Name} do fore the Google utilities and FirebaseInternalCore to work properly
 ```
@@ -70,3 +71,34 @@ target 'reactnativefirebase' do
   - Configure a sign in with Apple for Email Communication
   - A Certificate Signing Request is configured and saved 
   - Provisioning Profile has the App ID, Certificate and Device selected. with the Sign In With Apple capability Enabled
+  - A service Id is created and Apple Sign in is configured with call back URL from Firebase Authentication method. Service ID should also be linked to the App Id 
+  - for Apple Sign in on android - ensure that Apple Service Id is entered into the Oauth Services ID in the firebase authentication apple sign in method 
+  - The Info.plist has following added to it 
+  - FOR AUTHORIZING APP SSO capability
+  ``` 
+     <key>ASAuthorizationAppleIDProvider</key>
+      <dict>
+          <key>ASAuthorizationScope</key>
+          <array>
+              <string>email</string>
+              <string>fullName</string>
+          </array>
+          <key>ASAuthorizationScopeFullName</key>
+          <string></string>
+          <key>ASAuthorizationScopeEmail</key>
+          <string></string>
+      </dict>
+  ```
+- your app's bundle id with the Apple team Id at start 
+- your app's service id is added 
+- Each CFBundleURLSchemes can only contain 1 url in the array
+``` 
+	  <key>CFBundleURLSchemes</key>
+			  <array>
+				  <string>TEAMID.com.company.domain</string>
+			  </array>
+          <key>CFBundleURLSchemes</key>
+          <array>
+            <string>com.company.signinwithapple</string>
+          </array>
+```

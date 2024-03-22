@@ -11,6 +11,7 @@ import {auth as rnAuth} from '@react-native-firebase/auth'
 // const db = getFirestore();
 
 export default function HomeScreen( {extraData, navigation}) {
+    console.log(auth.currentUser)
     // console.log('AUTH', auth.currentUser.uid) // accessing userID directly from auth negating passing by props
     // console.log('PROPS', extraData.id) // Makes sure userID is coming through props
     const [entityText, setEntityText] = useState(''); // State to hold the text for the new entity
