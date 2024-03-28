@@ -28,7 +28,7 @@ export default function LoadScreen ({ navigation }) {
                 // navigation.navigate('Login')
               }
             } catch (error) {
-              console.error("Error fetching user data:", error);
+              log.error("LoadScreen: Error fetching user data:", error);
             } finally {
               setLoading(false);
             }
@@ -53,6 +53,7 @@ export default function LoadScreen ({ navigation }) {
             ) : (
                 <View>
                     <Text style={styles.text}>Login Failed Please Sign in Again</Text>
+                    <Text style={styles.text}>Developer Screen for quick access to home</Text>
                     <Button title='Login'onPress={()=>navigation.navigate('Login')}/>
                     <Button title='Home'onPress={()=>navigation.navigate('Home')}/>
 
@@ -62,24 +63,3 @@ export default function LoadScreen ({ navigation }) {
     )
 }
 
-// Namespace SDK
-// useEffect(() => {
-//   const usersRef = firebase.firestore().collection('users');
-//   firebase.auth().onAuthStateChanged(user => {
-//     if (user) {
-//       usersRef
-//         .doc(user.uid)
-//         .get()
-//         .then((document) => {
-//           const userData = document.data()
-//           setLoading(false)
-//           setUser(userData)
-//         })
-//         .catch((error) => {
-//           setLoading(false)
-//         });
-//     } else {
-//       setLoading(false)
-//     }
-//   });
-// }, []);

@@ -1,24 +1,27 @@
 import React, { useEffect, useState } from 'react'
-import { Button, FlatList, Keyboard, Text, TextInput, TouchableOpacity, View, Scrollview } from 'react-native'
+import { Button, FlatList, Keyboard, Text, TextInput, TouchableOpacity, View, Scrollview, Alert, ActivityIndicator} from 'react-native'
 import styles from './styles';
 import Collapsible from 'react-native-collapsible'
-import { collection, addDoc, query, where, orderBy, 
+import {getDocs, collection, addDoc, query, where, orderBy, 
     onSnapshot, serverTimestamp, deleteDoc, doc, updateDoc } from 'firebase/firestore';
 import {auth, db } from '../../firebase/config'
+import { OAuthProvider, signInWithPopup } from "firebase/auth";
 import {auth as rnAuth} from '@react-native-firebase/auth'
+import log from '../../components/logging_config'
 
 // Initialize Firestore
 // const db = getFirestore();
 
 export default function HomeScreen( {extraData, navigation}) {
-    console.log(auth.currentUser)
-    // console.log('AUTH', auth.currentUser.uid) // accessing userID directly from auth negating passing by props
-    // console.log('PROPS', extraData.id) // Makes sure userID is coming through props
+//    log.debug('AUTH', auth.currentUser)
+    //log.debug('AUTH', auth.currentUser.uid) // accessing userID directly from auth negating passing by props
+    //log.debug('PROPS', extraData.id) // Makes sure userID is coming through props
     const [entityText, setEntityText] = useState(''); // State to hold the text for the new entity
     const [entities, setEntities] = useState([]); // State to hold the entities fetched from Firestore
     const [isCollapsed, setIsCollapsed] = useState(true) // State to hold Collapsible status
     const [updateText, setUpdateText] = useState('') // State to hold Updated text for entity
     const [updateItem, setUpdateItem] = useState(null)  // State to hold current item for updating
+    const [loading, setLoading] = useState(false) // State to hold loading status
     // Reference to the 'entities' collection in Firestore
     const entityRef = collection(db, 'entities');
     const userID = auth.currentUser ? auth.currentUser.uid : null // Checks auth contains user information 
@@ -43,7 +46,7 @@ export default function HomeScreen( {extraData, navigation}) {
             // Update the entities state with the newEntities array
             setEntities(newEntities);
         }, (error) => {
-            console.log(error);
+            log.error(error);
         });
 
         // Cleanup function to unsubscribe from the snapshot listener when the component unmounts
@@ -75,16 +78,16 @@ export default function HomeScreen( {extraData, navigation}) {
     };
 
     const deleteItem = (item) => {
-        console.log(item)
+       log.debug('DELETEITEM',item)
         const docRef = doc(db, "entities", item.id)
         deleteDoc(docRef).then(()=>{
-            console.log("Document has been deleted")
-        }).catch(error => console.log(error))
+           log.info("Document has been deleted")
+        }).catch(error =>log.error('DELETE ERROR', error))
     }
 
 
     const updateItemOnPress = (item) => {
-        console.log(item)
+        log.debug('UPDATEITEM',item)
         if (updateItem && updateText.trim() !== "") { // Check if updateItem is not null and updateText is not empty
             const data = {
                 text: updateText
@@ -92,28 +95,92 @@ export default function HomeScreen( {extraData, navigation}) {
             const docRef = doc(db, "entities", updateItem.id);
             updateDoc(docRef, data)
                 .then(() => {
-                    console.log("Document has been updated");
+                    log.info("Document has been updated");
                     setIsCollapsed(true);
                     setUpdateItem(null);
                     setUpdateText(''); // Clear the updateText state
                 })
                 .catch((error) => {
-                    console.error("Error updating document: ", error);
+                    log.error("Error updating document: ", error);
                 });
         }
     };
 
+    const deleteAppleAccount = async () => {
+        try {
+            // Check if the user is signed in with Apple
+            const credentialState = await appleAuth.getCredentialStateForUser();
+    
+            if (credentialState === appleAuth.State.AUTHORIZED) {
+                // Revoke the Apple OAuth access token.
+                await appleAuth.revokeAuthorization();
+                
+                // Delete the user account.
+                // Delete the user account here...
+            } else {
+                // The user is not signed in with Apple or the credential state could not be determined.
+            }
+        } catch (error) {
+            log.error('Error deleting Apple account:', error);
+        }
+    };
+    
     const onDeleteAccountPress = (userID) => {
-        console.log(userID)
-        const userRef = doc(db, "users", userID)
-        deleteDoc(userRef).then(()=>{
-            console.log('USER has been deleted')
-            navigation.navigate('Login')
-        }).catch((error) => {
-            console.log(error)
-        })
+        Alert.alert('Are you sure you want to delete your account?', 'This action cannot be undone.', 
+        [
+            {
+                text: 'Cancel',
+                style: 'cancel',
+            },
+            {
+                text: 'Delete',
+                onPress: async () => {
+                    setLoading(true);
+                    try {
+                        log.debug('USERID', userID)
+                           // Delete documents where the user is the author
+                           const authorDocsSnapshot = await getDocs(query(entityRef, where('authorID', '==', userID), orderBy('createdAt', 'desc')));
+                           const deleteAuthorPromises = authorDocsSnapshot.docs.map((doc) => {
+                               return deleteDoc(doc.ref);
+                           });
+                           await Promise.all(deleteAuthorPromises);
+   
+                           log.info('User documents where the user is the author have been deleted');
+   
+                        // Delete user document
+                        const userRef = doc(db, "users", userID)
+                        deleteDoc(userRef).then(()=>{
+                        log.info('USER Firestore Document has been deleted')
+                            navigation.navigate('Login')
+                        }).catch((error) => {
+                            log.error(error)
+                        })    
+                        
+                        const user = auth.currentUser
+                        if (user) {
+                            const providers = await user.getIdTokenResult().then((idTokenResult) => {
+                                return idTokenResult.signInProvider;
+                            });
 
-    }
+                            if (providers && providers.includes('apple.com')) {
+                                await deleteAppleAccount();
+                            }
+
+                            user.delete();
+                            log.info('User Account has Been Deleted');
+                        }
+
+    
+                    } catch (error) {
+                        log.error('Error deleting user:', error);
+                    }
+                    setLoading(false);
+                }
+            }    
+        ])
+        
+    };
+        
 
     // Function to render each entity item in the FlatList
    
@@ -130,7 +197,7 @@ export default function HomeScreen( {extraData, navigation}) {
                     </Text>
                     <TouchableOpacity style={styles.deleteButton} onPress={() => { 
                         setIsCollapsed(false), setUpdateItem(item),
-                        console.log('UPDATE',updateItem)
+                        log.debug('UPDATE',updateItem)
                         }}>
                         <Text style={styles.buttonText}>Update</Text>
                     </TouchableOpacity>
@@ -161,6 +228,7 @@ export default function HomeScreen( {extraData, navigation}) {
         <View style={styles.container}>
         
             <View style={styles.formContainer}>
+                <ActivityIndicator animating={loading} size={"large"}/>
                 <TextInput
                     style={styles.input}
                     placeholder='Add new entity'

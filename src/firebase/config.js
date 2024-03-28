@@ -1,37 +1,32 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
-import { getAuth, getReactNativePersistence, initializeAuth } from "firebase/auth";
+import { getReactNativePersistence, initializeAuth, } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 import ReactNativeAsyncStorage from '@react-native-async-storage/async-storage'
-
+import log from '../components/logging_config'
+import { APIKEY, AUTHDOMAIN, DATABASEURL, PROJECTID, STORAGEBUCKET, MESSAGINGSENDERID, APPID, MEASUREMENTID } from '@env'
 
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
 // Your web app's Firebase configuration
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
-// Firebase Config is from a web app project
-// FOR KEEPING YOUR CONFIG IN A .env FILE
-const apiKey = process.env.apiKey
-const authDomain = process.env.authDomain
-const databaseURL= process.env.databaseURL
-const projectId = process.env.projectId
-const storageBucket= process.env.storageBucket
-const messagingSenderId= process.env.messagingSenderId
-const appId= process.env.appId 
-const measurementId = process.env.measurementId 
+// Firebase Config is for a Web APP
 
-// ADD YOUR FIREBASE WEB APP CONFIG DATA BELOW
+
+// FOR KEEPING YOUR CONFIG IN A .env FILE
+
+log.debug('APIKEY', APIKEY)
 
 const firebaseConfig = {
-  apiKey: apiKey, // 'api-key',
-  authDomain: authDomain, // 'project-id.firebaseapp.com',
-  databaseURL: databaseURL, //'https://project-id.firebaseio.com',
-  projectId: projectId, //'project-id',
-  storageBucket: storageBucket,// 'project-id.appspot.com',
-  messagingSenderId: messagingSenderId, //'sender-id',
-  appId: appId, // 'app-id',
-  measurementId: measurementId //'G-measurement-id',
+  apiKey: APIKEY, // 'api-key',
+  authDomain: AUTHDOMAIN ,// 'project-id.firebaseapp.com',
+  databaseURL: DATABASEURL, //'https://project-id.firebaseio.com',
+  projectId: PROJECTID, //'project-id',
+  storageBucket: STORAGEBUCKET,// 'project-id.appspot.com',
+  messagingSenderId: MESSAGINGSENDERID, //'sender-id',
+  appId: APPID, // 'app-id',
+  measurementId: MEASUREMENTID, //'G-measurement-id',
 };
 
 // Initialize Firebase

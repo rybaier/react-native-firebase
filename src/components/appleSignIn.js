@@ -4,6 +4,7 @@ import { appleAuth, AppleButton } from '@invertase/react-native-apple-authentica
 import { OAuthProvider, signInWithCredential } from 'firebase/auth';
 import { auth, db } from '../firebase/config';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
+import log from './logging_config'
 
 const AppleSignInButton = ({ navigation }) => {
   const provider = new OAuthProvider('apple.com');
@@ -15,7 +16,7 @@ const AppleSignInButton = ({ navigation }) => {
         requestedOperation: appleAuth.Operation.LOGIN,
         requestedScopes: [appleAuth.Scope.EMAIL, appleAuth.Scope.FULL_NAME],
       });
-      console.log('APPLE RESPONSE', appleAuthRequestResponse)
+      log.debug('APPLE RESPONSE', appleAuthRequestResponse)
       // Ensure Apple returned a user identityToken
       if (!appleAuthRequestResponse.identityToken) {
         throw new Error('Apple Sign-In failed - no identity token returned');
@@ -23,17 +24,17 @@ const AppleSignInButton = ({ navigation }) => {
 
       // Create a Firebase credential from the response
       const { identityToken, user, nonce } = appleAuthRequestResponse;
-      console.log('IDENTITY TOKEN', identityToken)
-      console.log('NONCE', nonce)
+      log.debug('IDENTITY TOKEN', identityToken)
+      log.debug('NONCE', nonce)
       const appleCredential = provider.credential({idToken: identityToken, rawNonce: nonce});
 
-      console.log('APPLE CREDENTIAL', appleCredential)
+      log.debug('APPLE CREDENTIAL', appleCredential)
       // Sign the user in with the credential
-      // console.log(provider.credential(identityToken))
+      // log.debug(provider.credential(identityToken))
         await signInWithCredential(auth, appleCredential);
       // Get current user
         const currentUser = auth.currentUser;
-        console.log('USER', auth.currentUser)
+        log.debug('USER', auth.currentUser)
          // Check if user document already exists in Firestore
          const userRef = doc(db, 'users',currentUser.uid);
          const docSnapshot = await getDoc(userRef);
@@ -48,7 +49,7 @@ const AppleSignInButton = ({ navigation }) => {
         // Navigate to the Home screen
           navigation.navigate('Home');
         } catch (error) {
-        console.error('Apple sign-in error:', error);
+       log.error('Apple sign-in error:', error);
         }
     };
 

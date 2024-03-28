@@ -2,17 +2,18 @@
 I found this tutorial while looking for information about Firebase and React Native. I have been updating it to the Firebase Modular Web SDK syntax 
 #####
 [React Native Firebase Tutorial](https://www.freecodecamp.org/news/react-native-firebase-tutorial/)
-#####
-
+#
+## What I've done 
 - updated working code from namespace SDK to Firebase Modular SDK
 - Added SSO for google on android and ios
 - added SSO for apple on ios 
-- added logout
+- added logout button component and function
+- added update and delete entity options
+- added delete account and all associated firestore documents
 
-- Will implement further options as time goes on 
-    - update and delete entity 
 
-#### Firestore rules for 
+
+## Firestore rules for 
 ```
 rules_version = '2';
 service cloud.firestore {
@@ -33,11 +34,18 @@ service cloud.firestore {
   }
 }
 ```
-#####
+## Single Sign On for Google and Apple
+Only available with access to native module. If you want to implement SSO Create an Android and IOS app in firebase, download the google-services.json and GoogleService-Info.plist and place in root directory. Don't forget to add these to your .gitignore 
+then run
+```
+npx expo prebuild
+```
+verify that a copy of the google-services.json is in the android/app directory
+verify that a copy of the GoogleService-Info.plist is in the ios/yourappname directory
 
-### notes on ios builds for Firebase Configuration 
+### IOS builds for Firebase Configuration 
 #### If using firebase/firestore for IOS firebase configuration
-- in Podfile use_modular_headers! must be inserted directly below target {App Name} do fore the Google utilities and FirebaseInternalCore to work properly
+- in Podfile use_modular_headers! must be inserted directly below target {App Name} do for the Google utilities and FirebaseInternalCore to work properly
 ```
 target 'reactnativefirebase' do
   use_modular_headers!
@@ -94,11 +102,16 @@ target 'reactnativefirebase' do
 - Each CFBundleURLSchemes can only contain 1 url in the array
 ``` 
 	  <key>CFBundleURLSchemes</key>
-			  <array>
-				  <string>TEAMID.com.company.domain</string>
-			  </array>
+        <array>
+          <string>TEAMID.com.company.domain</string>
+        </array>
           <key>CFBundleURLSchemes</key>
-          <array>
-            <string>com.company.signinwithapple</string>
-          </array>
+        <array>
+          <string>com.company.signinwithapple</string>
+        </array>
 ```
+
+
+### Upcoming Updates to this repo
+- Firebase Account Authentication Delete 
+- Firebase Storage Bucket Photo upload

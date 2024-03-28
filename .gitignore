@@ -6,6 +6,7 @@ node_modules/
 android
 ios
 GoogleService-Info.plist
+google-services.json
 RNT.csr
 RNT.key
 # Expo

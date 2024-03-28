@@ -6,14 +6,19 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 import { auth as firebaseAuth, db } from '../firebase/config';
 import { onAuthStateChanged, signInWithCredential, GoogleAuthProvider } from 'firebase/auth';
 import { doc, getDoc, setDoc } from 'firebase/firestore'
+import log from '../components/logging_config'
+import {WEBCLIENTID} from '@env'
 
 
 // Configure Google Sign-In with the webClientId from the environment variables
-
-
+// GoogleSignin.configure({
+//     webClientId: 'WebClientId use client type 3 from google-servicesjson',
+//   });
+log.debug('WEBCLIENTID', WEBCLIENTID)
 GoogleSignin.configure({
-    webClientId: 'WebClientId use client type 3 from googleservicesjson',
+    webClientId: WEBCLIENTID,
   });
+
 // Google Sign-In button component
 const GoogleSignInButton = ({ navigation }) => {
  
@@ -28,11 +33,12 @@ const GoogleSignInButton = ({ navigation }) => {
       // Sign in the user with the Google credential
       await signInWithCredential(firebaseAuth, googleCredential);
       const uid = firebaseAuth.currentUser.uid
-    //   console.log('Logged in user:', user);
-    //   console.log('UID', uid)
+      // log.debug('Logged in user:', user);
+      // log.debug('UID', uid)
      // Check if user document already exists in Firestore
       const userRef = doc(db, 'users', uid)
       const docSnapshot = await getDoc(userRef);
+      log.debug('DOC', docSnapshot)
         if (!docSnapshot.exists) {
         // Create a user document in Firestore
             await setDoc(userRef, {
@@ -45,10 +51,10 @@ const GoogleSignInButton = ({ navigation }) => {
       // Update Firebase auth state
    
     //   onAuthStateChanged(auth, user)
-    //   console.log('FIREBASE', firebaseAuth.currentUser)
+      // log.debug('FIREBASE', firebaseAuth.currentUser)
       navigation.navigate('Home')
     } catch (error) {
-      console.error('Google sign-in error:', error);
+      log.error('Google sign-in error:', error);
     }
   };
 

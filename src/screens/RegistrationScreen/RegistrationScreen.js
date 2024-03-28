@@ -129,34 +129,3 @@ export default function RegistrationScreen({ navigation }) {
 
 
 
-// Namespace SDK
-// const onRegisterPress = () => {
-    //         if (password !== confirmPassword) {
-    //             alert("Passwords don't match.")
-    //             return
-    //         }
-    //         const auth = getAuth();
-    //         const db = getFirestore();
-    //         createUserWithEmailAndPassword(auth, email, password)
-    //             .then((response) => {
-    //                 const uid = response.user.uid
-    //                 const data = {
-    //                     id: uid,
-    //                     email,
-    //                     fullName,
-    //                 };
-    //                 const usersRef = addDoc(collection(db, "users"))
-    //                 // usersRef
-    //                 //     .doc(uid)
-    //                 //     .set(data)
-    //                     .then(() => {
-    //                         navigation.navigate('Home', {user: data})
-    //                     })
-    //                     .catch((error) => {
-    //                         alert(error)
-    //                     });
-    //             })
-    //             .catch((error) => {
-    //                 alert(error)
-    //         });
-    // }
