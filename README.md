@@ -9,11 +9,11 @@ I found this tutorial while looking for information about Firebase and React Nat
 - added SSO for apple on ios 
 - added logout button component and function
 - added update and delete entity options
-- added delete account and all associated firestore documents
+- added delete user doc and all associated firestore documents
+- added Firebase Account Authentication Delete 
 
 
-
-## Firestore rules for 
+## Firestore rules to ensure no unauthorized access
 ```
 rules_version = '2';
 service cloud.firestore {
@@ -54,8 +54,8 @@ target 'reactnativefirebase' do
 
  ```
 
-#### If using react-native-firebase for IOS firebase configuration 
-- in Podfile do not use_modular_headers. Comment all use_frameworks! 
+#### If using react-native-firebase package for IOS firebase configuration 
+- in Podfile do not use_modular_headers. Comment out all use_frameworks! 
 - add use_frameworks! :linkage => static
 ```
 target 'reactnativefirebase' do
@@ -65,13 +65,8 @@ target 'reactnativefirebase' do
   use_frameworks! :linkage => :static 
 
   ```
-#### notes on ios success build
-- Warnings to address that didn't show in Android
-  -  WARN  Sending `onAnimatedValueUpdate` with no listeners registered.
-- Top App Bar differences 
-  - Show's direct path back to Login on Homescreen without logging out
 
-#### Apple Sign In notes
+#### To Implement Apple Sign In 
 - In Apple Developer Account verify 
   - Key is configured with team and bundle identifier
   - Development Device is registered with it's UUID
@@ -80,7 +75,7 @@ target 'reactnativefirebase' do
   - A Certificate Signing Request is configured and saved 
   - Provisioning Profile has the App ID, Certificate and Device selected. with the Sign In With Apple capability Enabled
   - A service Id is created and Apple Sign in is configured with call back URL from Firebase Authentication method. Service ID should also be linked to the App Id 
-  - for Apple Sign in on android - ensure that Apple Service Id is entered into the Oauth Services ID in the firebase authentication apple sign in method 
+  - For Apple Sign in on android - ensure that Apple Service Id is entered into the Oauth Services ID in the firebase authentication apple sign in method 
   - The Info.plist has following added to it 
   - FOR AUTHORIZING APP SSO capability
   ``` 
@@ -113,5 +108,4 @@ target 'reactnativefirebase' do
 
 
 ### Upcoming Updates to this repo
-- Firebase Account Authentication Delete 
 - Firebase Storage Bucket Photo upload

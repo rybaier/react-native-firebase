@@ -115,8 +115,6 @@ export default function HomeScreen( {extraData, navigation}) {
                 // Revoke the Apple OAuth access token.
                 await appleAuth.revokeAuthorization();
                 
-                // Delete the user account.
-                // Delete the user account here...
             } else {
                 // The user is not signed in with Apple or the credential state could not be determined.
             }
@@ -155,7 +153,7 @@ export default function HomeScreen( {extraData, navigation}) {
                         }).catch((error) => {
                             log.error(error)
                         })    
-                        
+                        // DELETE THE USER ACCOUNT IN FIREBASE AUTHENTICATION
                         const user = auth.currentUser
                         if (user) {
                             const providers = await user.getIdTokenResult().then((idTokenResult) => {
